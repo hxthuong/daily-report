@@ -1,0 +1,135 @@
+/* Màn hình dưới 1280px */
+@media (max-width: 1280px) {
+  body {
+    overflow-x: hidden;
+  }
+}
+
+/* Màn hình dưới 1024px */
+@media (max-width: 1024px) {
+  .container-dashboard .badge-content h3 {
+    font-size: 14px;
+  }
+
+  .filter-container {
+    flex-wrap: wrap;
+  }
+
+  .status-item svg {
+    width: 18px;
+    height: 18px;
+  }
+
+  .status-item span {
+    font-size: 12px;
+  }
+
+  .filter-container:has(.group-btn) {
+    grid-template-columns: repeat(9, minmax(0, 1fr)) !important;
+  }
+
+  .filter-container:has(.group-btn) .col-span-2 {
+    grid-column: span 3 / span 9;
+  }
+
+  .filter-container:has(.group-btn) .col-span-1 {
+    grid-column: span 2 / span 9;
+  }
+
+  .filter-container:has(.group-btn) .group-btn {
+    grid-column: span 2 / span 9;
+  }
+}
+
+/* Màn hình dưới 940px */
+@media (max-width: 940px) {
+  .greeting-container {
+    min-width: 100%;
+  }
+
+  .role-container .col-span-2,
+  .role-container .col-span-6 {
+    grid-column: span 8 / span 8;
+  }
+
+  .edit-role .col-span-2 {
+    grid-column: span 2 / span 6 !important;
+  }
+}
+
+/* Màn hình dưới 768px */
+@media (max-width: 768px) {
+  .container-dashboard {
+    flex-wrap: wrap;
+  }
+
+  .filter-container:has(.group-btn) {
+    grid-template-columns: repeat(7, minmax(0, 1fr)) !important;
+  }
+
+  .filter-container:has(.group-btn) .col-span-2 {
+    grid-column: span 3 / span 7;
+  }
+
+  .filter-container:has(.group-btn) .col-span-1 {
+    grid-column: span 2 / span 7;
+  }
+
+  .filter-container:has(.group-btn) .group-btn {
+    grid-column: span 7 / span 7;
+  }
+}
+
+/* Màn hình dưới 640px */
+@media (max-width: 640px) {
+  .badge-container {
+    width: 100%;
+  }
+
+  .badge-container .col-span-1 {
+    grid-column: span 3 / span 3;
+    width: 100%;
+  }
+}
+
+/* Màn hình dưới 568px */
+@media (max-width: 568px) {
+  .task-container .col-span-3 {
+    grid-column: span 7 / span 7;
+  }
+
+  .task-container .col-span-2 {
+    grid-column: span 3 / span 7;
+  }
+
+  .task-result {
+    flex-wrap: wrap;
+    flex-direction: column;
+    align-items: start;
+    row-gap: 10px;
+  }
+
+  .info-user .col-span-1 {
+    grid-column: span 4 / span 4;
+  }
+}
+
+/* Màn hình dưới 415px */
+@media (max-width: 415px) {
+  .filter-container.grid.grid-cols-3 {
+    grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
+  }
+
+  .filter-container .col-span-2 {
+    grid-column: span 1 / span 1;
+  }
+
+  .name-user {
+    flex-direction: column;
+  }
+
+  .edit-user .col-span-1,
+  .edit-user .col-span-2 {
+    grid-column: span 5 / span 5;
+  }
+}
