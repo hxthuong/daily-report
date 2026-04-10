@@ -392,7 +392,7 @@ export default function Home() {
       </div>
 
       {/* MAIN */}
-      <div className="bg-white p-4 rounded-lg mt-4">
+      <div className="bg-white py-4 rounded-lg mt-4">
         {/* SEARCH + DATE */}
         {width < 940 && (
           <div className="grid grid-cols-3 space-x-3 mb-3 filter-container">
