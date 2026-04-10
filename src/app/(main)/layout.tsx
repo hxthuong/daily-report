@@ -29,7 +29,7 @@ const initPermissions: PermissionState = {
   role: { label: "Phân quyền", actions: [] },
 };
 
-const SIDEBAR_WIDTH = 260;
+const SIDEBAR_WIDTH = 215;
 
 export default function AdminLayout({
   children,
@@ -40,6 +40,7 @@ export default function AdminLayout({
   const [permissions, setPermissions] =
     useState<PermissionState>(initPermissions);
   const [loaded, setLoaded] = useState(false);
+  const [collapsed, setCollapsed] = useState(false);
 
   const { width } = useScreen();
   const pathname = usePathname();
@@ -85,9 +86,11 @@ export default function AdminLayout({
   useEffect(() => {
     if (!loaded) return;
 
+    const expiresAt = Date.now() + 1800 * 1000;
     Cookies.set("permissions", JSON.stringify(permissions), {
       path: "/",
       sameSite: "strict",
+      expires: expiresAt,
     });
   }, [permissions, loaded]);
 
@@ -99,8 +102,7 @@ export default function AdminLayout({
       <Sidebar
         open={open}
         onClose={() => setOpen(false)}
-        permissions={permissions}
-        loaded={loaded}
+        collapsed={collapsed}
       />
 
       {/* OVERLAY MOBILE */}

@@ -13,6 +13,7 @@ import { toHHmm } from "@/utils/dateTime";
 import { useNotification } from "@/context/notification";
 import { createClient } from "@/utils/supabase/client";
 import { format } from "date-fns";
+import { loadDataWithTTL } from "@/utils/secureStorage";
 
 export default function TaskEditPage({
   UserID,
@@ -42,6 +43,7 @@ export default function TaskEditPage({
   const [result, setResult] = useState<string>("");
   const [status, setStatus] = useState<string>("completed");
   const supabase = createClient();
+  const dataLogin = (loadDataWithTTL("KEY_LOGIN") as User) || null;
 
   useEffect(() => {
     if (!data) return;
@@ -78,8 +80,15 @@ export default function TaskEditPage({
       return;
     }
 
-    const list = dataUser
-      ? dataUser.map((item: User) => {
+    const dt = dataUser?.filter(
+      (x: User) =>
+        x.role !== "admin" &&
+        (dataLogin?.role !== "user" ||
+          (dataLogin?.role === "user" && x.id === dataLogin?.id)),
+    );
+
+    const list = dt
+      ? dt.map((item: User) => {
           return { id: item.id, label: item.fullname };
         })
       : [];

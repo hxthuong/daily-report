@@ -52,13 +52,8 @@ export default function Home() {
   const [openDetail, setOpenDetail] = useState(false);
   const [loading, setLoading] = useState(false);
   const supabase = createClient();
-
-  const [mounted, setMounted] = useState(false);
   const { width } = useScreen();
-
-  useEffect(() => {
-    setMounted(true);
-  }, []);
+  const dataLogin = (loadDataWithTTL("KEY_LOGIN") as User) || null;
 
   useEffect(() => {
     setHeader({
@@ -67,13 +62,13 @@ export default function Home() {
   }, []);
 
   const columns = [
-    {
-      accessor: "workdate",
-      label: "Ngày",
-      width: "8%",
-      className: "text-center",
-      render: (row: Task) => <span>{format(row.workdate, "dd/MM/yyyy")}</span>,
-    },
+    // {
+    //   accessor: "workdate",
+    //   label: "Ngày",
+    //   width: "8%",
+    //   className: "text-center",
+    //   render: (row: Task) => <span>{format(row.workdate, "dd/MM/yyyy")}</span>,
+    // },
     {
       accessor: "fullname",
       label: "Tên nhân viên",
@@ -159,7 +154,7 @@ export default function Home() {
               {row.today}
             </span>
             {row.list && row.list.length > 0 && (
-              <div className="absolute hidden group-hover:block bg-gray-800 text-white text-xs rounded px-2 py-1 bottom-full mb-1 z-10 min-w-30">
+              <div className="absolute top-0 hidden group-hover:block bg-gray-800 text-white text-xs rounded px-2 py-1 mb-1 z-10 min-w-30">
                 {/* eslint-disable-next-line @typescript-eslint/no-explicit-any */}
                 {row.list.map((item: any, idx: number) => (
                   <li key={idx} className="flex items-center space-x-0.5">
@@ -196,14 +191,24 @@ export default function Home() {
       return;
     }
 
-    const list = dataUser
-      ? dataUser.map((item: User) => {
+    const dt = dataUser?.filter(
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      (x: any) =>
+        x.role !== "admin" &&
+        (dataLogin?.role !== "user" ||
+          (dataLogin?.role === "user" && x.id === dataLogin?.id)),
+    );
+
+    const list = dt
+      ? dt.map((item: User) => {
           return { id: item.id, label: item.fullname };
         })
       : [];
 
     setEmployees(list);
     setLoading(false);
+
+    return list;
   };
 
   useEffect(() => {
@@ -234,7 +239,14 @@ export default function Home() {
     //   return;
     // }
 
-    return dataReport || [];
+    return (
+      dataReport.filter(
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+        (x: any) =>
+          dataLogin?.role !== "user" ||
+          (dataLogin?.role === "user" && x.userid === dataLogin?.id),
+      ) || []
+    );
   };
 
   useEffect(() => {
@@ -247,27 +259,34 @@ export default function Home() {
   useEffect(() => {
     (async () => {
       const dt = await fetchData();
+      const users = await fetchEmployees();
+
       const reported = [...new Set(dt.map((x: Task) => x.fullname))];
       const completed =
         dt.filter((x: Task) => x.status === "completed").length || 0;
       const notReported = [
         ...new Set(
-          employees
-            .map((x) => x.label)
-            .filter((item) => !new Set(reported).has(item)),
+          users
+            // eslint-disable-next-line @typescript-eslint/no-explicit-any
+            .map((x: any) => x.label)
+            .filter((item: string) => !new Set(reported).has(item)),
         ),
       ];
+      const notReportedCount =
+        users.length - (reported.length || 0) > 0
+          ? users.length - (reported.length || 0)
+          : 0;
       const report = [
         {
           name: "Đã báo cáo",
           today: reported.length || 0,
-          total: employees.length,
+          total: users.length,
           list: reported,
         },
         {
           name: "Chưa báo cáo",
-          today: employees.length - (reported.length || 0) || 0,
-          total: employees.length,
+          today: notReportedCount,
+          total: users.length,
           list: notReported,
         },
         { name: "Đã hoàn thành", today: completed, total: dt.length },
@@ -292,7 +311,7 @@ export default function Home() {
 
   const completed = data.filter((x) => x.status === "completed").length || 0;
   const incomplete = data.filter((x) => x.status === "incomplete").length || 0;
-  const dataLogin = mounted ? (loadDataWithTTL("KEY_LOGIN") as User) : null;
+
   const displayName =
     dataLogin?.fullname?.split(" ")[
       dataLogin?.fullname?.split(" ").length - 1
@@ -451,7 +470,9 @@ export default function Home() {
 
         {/* TABLE */}
         <div className="grid grid-cols-6 mt-3 space-x-3 task-db-containter">
-          <div className={`${width > 1024 ? "col-span-4" : "col-span-6"}`}>
+          <div
+            className={`${width > 1024 && dataLogin?.role !== "user" ? "col-span-4" : "col-span-6"}`}
+          >
             <div className="mb-3 flex items-center justify-between">
               <h3 className="text-blue-800 text-2xl font-semibold">
                 Danh sách công việc
@@ -568,7 +589,7 @@ export default function Home() {
               </div>
             )}
           </div>
-          {width >= 940 && (
+          {width >= 940 && dataLogin?.role !== "user" && (
             <div className="col-span-2">
               <div className="mb-3 flex items-center justify-between">
                 <h3 className="text-blue-800 text-2xl font-semibold">&nbsp;</h3>

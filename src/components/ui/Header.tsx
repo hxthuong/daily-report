@@ -148,12 +148,12 @@ export default function Header() {
                 >
                   <PencilLine className="w-4 h-4" /> <span>Đổi mật khẩu</span>
                 </Link>
-                <Link
+                {/* <Link
                   className="p-3 flex items-center space-x-2 text-gray-500 hover:bg-blue-100"
                   href={"/"}
                 >
                   <Cog className="w-4 h-4" /> <span>Cài đặt</span>
-                </Link>
+                </Link> */}
                 <Link
                   className="p-3 flex items-center space-x-2 text-gray-500 hover:bg-blue-100"
                   href={"/"}

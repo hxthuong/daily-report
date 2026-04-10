@@ -4,6 +4,9 @@ import { useEffect, useMemo, useRef, useState } from "react";
 import CustomImage from "../image";
 import { Briefcase, FileUp, PieChart, Settings } from "lucide-react";
 import { usePathname, useRouter } from "next/navigation";
+import { createClient } from "@/utils/supabase/client";
+import { loadDataWithTTL } from "@/utils/secureStorage";
+import { User } from "@/types/user";
 
 type Action = "view" | "create" | "edit" | "delete";
 
@@ -43,23 +46,62 @@ const menuSidebar = [
 export default function Sidebar({
   open,
   onClose,
-  permissions,
-  loaded,
+  collapsed,
 }: {
   open: boolean;
   onClose: () => void;
-  permissions: PermissionState;
-  loaded: boolean;
+  collapsed?: boolean;
 }) {
   const pathname = usePathname();
   const router = useRouter();
   const panelRef = useRef<HTMLDivElement | null>(null);
 
   const [currentId, setCurrentId] = useState<string>("1");
+  const [loaded, setLoaded] = useState(false);
+  const [permissions, setPermissions] = useState<PermissionState>({
+    work: { label: "Công việc", actions: [] },
+    file: { label: "File", actions: [] },
+    user: { label: "Người dùng", actions: [] },
+    role: { label: "Phân quyền", actions: [] },
+  });
+  const supabase = createClient();
+  const dataLogin = loadDataWithTTL("KEY_LOGIN") as User;
+
+  // Fetch permission
+  useEffect(() => {
+    if (!dataLogin) return;
+
+    const fetchPermission = async () => {
+      try {
+        const { data, error } = await supabase.rpc("spu_dr_roles_gets", {
+          p_id: dataLogin.roleid,
+        });
+
+        if (error) return;
+
+        if (data?.length > 0) {
+          setPermissions(
+            data[0].permissions || {
+              work: { label: "Công việc", actions: [] },
+              file: { label: "File", actions: [] },
+              user: { label: "Người dùng", actions: [] },
+              role: { label: "Phân quyền", actions: [] },
+            },
+          );
+        }
+      } catch (err) {
+        console.error(err);
+      } finally {
+        setLoaded(true);
+      }
+    };
+
+    fetchPermission();
+  }, [dataLogin]);
 
   // ✅ Filter menu theo permission
   const filteredMenu = useMemo(() => {
-    if (!loaded) return [];
+    if (!loaded) return []; // ⭐ chặn render sớm
 
     return menuSidebar.filter((item) => {
       if (!item.permissionKey) return true;
@@ -103,7 +145,7 @@ export default function Sidebar({
       ref={panelRef}
       className="fixed top-0 left-0 h-full z-[60] bg-blue-950 shadow-lg transition-transform duration-300 ease-in-out will-change-transform"
       style={{
-        width: 260,
+        width: 215,
         transform: open ? "translateX(0)" : "translateX(-100%)",
       }}
     >
