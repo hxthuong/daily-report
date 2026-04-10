@@ -138,6 +138,10 @@ export default function TaskEditPage({
       return;
     }
 
+    if (startTime && endTime && startTime > endTime) {
+      return notify.warning("Giờ bắt đầu không được lớn hơn giờ kết thúc!");
+    }
+
     if (status !== "completed" && status !== "incomplete" && !result.trim()) {
       notify.warning(
         "Vui lòng chọn lại trạng thái hoặc nhập nội dung trạng thái khác",

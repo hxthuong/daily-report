@@ -54,6 +54,7 @@ export default function Header() {
   };
 
   const handleChange = async () => {
+    console.log(dataLogin?.id);
     if (!oldPassword.trim()) {
       setMessage("Vui lòng nhập mật khẩu hiện tại");
       setIsValid(false);
@@ -81,7 +82,7 @@ export default function Header() {
     const { data: result, error } = await supabase.rpc(
       "spu_dr_users_change_password",
       {
-        id: dataLogin?.id,
+        p_id: dataLogin?.id, // ✅ đúng tên
         p_oldpassword: oldPassword,
         p_newpassword: newPassword,
       },
