@@ -231,7 +231,8 @@ export default function UserEditPage({
         <div className="col-span-1">
           <p className="form-label">Tên đăng nhập</p>
           <input
-            className="form-input"
+            className="form-input disabled:bg-gray-100!"
+            disabled={data !== null}
             value={username}
             onChange={(e) => setUsername(e.target.value)}
           />
