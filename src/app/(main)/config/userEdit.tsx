@@ -286,7 +286,7 @@ export default function UserEditPage({
           <p className="form-label">Trạng thái</p>
           <div className="flex items-center space-x-3">
             <RadioButton
-              label="Sử dụng"
+              label="Hoạt động"
               value={"1"}
               checked={isActive === "1"}
               onChange={(e) => {

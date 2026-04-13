@@ -106,7 +106,7 @@ export default function UserPage() {
         if (row.isactive === true)
           return (
             <span className="px-2 py-1 bg-green-500 rounded-md text-xs text-white">
-              Sử dụng
+              Hoạt động
             </span>
           );
         return (
